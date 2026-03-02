@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Sipariş Kodunuz</title>
+<style>
+body { font-family:'Segoe UI', sans-serif; background:#f5f5f5; display:flex; justify-content:center; align-items:center; height:100vh; margin:0; }
+#codeContainer { background:#fff; padding:40px; border-radius:20px; text-align:center; width:400px; box-shadow:0 4px 20px rgba(0,0,0,0.2);}
+h2 { margin-bottom:20px; }
+#orderCode { font-size:32px; font-weight:bold; margin-bottom:20px;}
+button { padding:12px 20px; margin:10px; border:none; border-radius:10px; cursor:pointer; font-weight:bold; color:#fff;}
+#confirmBtn { background:#28a745; }
+#cancelBtn { background:#dc3545; }
+#warning { background:#f8d7da; color:#721c24; padding:15px; border-radius:10px; margin-top:20px; font-weight:bold; }
+</style>
+</head>
+<body>
+<div id="codeContainer">
+<h2>Sipariş Kodunuz</h2>
+<div id="orderCode">000000</div>
+<button id="confirmBtn">Onayla</button>
+<button id="cancelBtn">Siparişi İptal Et</button>
+<div id="warning">
+UYARI! PARAYI GÖNDERİRKEN IBAN AÇIKLAMASINA "MSAESPORTS" YAZMANIZ GEREKMEKTEDİR. AKSİ TAKDİRDE PARA GEÇERSİZ SAYILACAK VE SİZE GERİ GÖNDERİLECEKTİR!
+</div>
+</div>
+
+<script>
+// URL parametresinden kodu al
+const params = new URLSearchParams(window.location.search);
+const orderCode = params.get("code");
+document.getElementById("orderCode").textContent = orderCode || "000000";
+
+// Onayla tuşu
+document.getElementById("confirmBtn").addEventListener("click", ()=>{
+    alert("İşlem başarılı!");
+    setTimeout(()=>{ window.location.href="index.html"; }, 3000); // 3 saniye sonra ana sayfaya
+});
+
+// İptal tuşu
+document.getElementById("cancelBtn").addEventListener("click", ()=>{
+    alert("Sipariş iptal edildi!");
+    window.location.href="index.html";
+});
+</script>
+</body>
+</html>
