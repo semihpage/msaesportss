@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>MSA Esports Sipariş Formu</title>
+<style>
+body { font-family:'Segoe UI', sans-serif; background:#f5f5f5; color:#111; margin:0; padding:0; display:flex; justify-content:center; }
+.container { display:flex; gap:30px; margin-top:50px; }
+#cartSection { background:#fff; padding:20px; border-radius:20px; width:300px; max-height:500px; overflow-y:auto; box-shadow:0 4px 15px rgba(0,0,0,0.2);}
+#cartSection h2 { text-align:center; margin-top:0; }
+.cartItem { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;}
+.cartItem img { width:50px; border-radius:8px; margin-right:10px;}
+#cartTotal { text-align:right; font-weight:bold; margin-top:10px;}
+#formSection { background:#fff; padding:25px; border-radius:20px; width:400px; box-shadow:0 4px 15px rgba(0,0,0,0.2);}
+#formSection h2 { text-align:center; margin-bottom:20px;}
+input, select { padding:10px; margin-top:8px; width:100%; border-radius:8px; border:1px solid #ccc; box-sizing:border-box; }
+button { width:100%; margin-top:10px; padding:10px; border-radius:10px; background:#00bfff; color:#fff; border:none; cursor:pointer; font-weight:bold; }
+button:hover{background:#0099cc;}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div id="cartSection">
+    <h2>Sepetiniz</h2>
+    <div id="cartItems"></div>
+    <div id="cartTotal">Toplam: 0 TL</div>
+  </div>
+
+  <div id="formSection">
+    <h2>Sipariş Formu</h2>
+    <input type="text" id="name" placeholder="Ad Soyad" required><br>
+    <input type="email" id="email" placeholder="Eposta" required><br>
+    <input type="text" id="phone" placeholder="Telefon (5xx xxx xx xx)" required><br>
+    <select id="country" disabled><option>Türkiye</option></select><br>
+    <input type="text" id="city" placeholder="Şehir" required><br>
+    <input type="text" id="district" placeholder="İlçe" required><br>
+    <input type="text" id="neighborhood" placeholder="Mahalle" required><br>
+    <input type="text" id="street" placeholder="Sokak" required><br>
+    <input type="text" id="addressDetails" placeholder="Adres Detayı" required><br>
+    <input type="text" id="discount" placeholder="İndirim Kodu"><br>
+    <button id="submitOrder">Ödeme Yap</button>
+  </div>
+</div>
+
+<script>
+let cart=JSON.parse(localStorage.getItem("userCart") || "[]");
+const cartItemsDiv=document.getElementById("cartItems");
+const cartTotalDiv=document.getElementById("cartTotal");
+
+function calculateTotal(){ 
+  let total=cart.reduce((a,b)=>a+b.price,0);
+  const discount=document.getElementById("discount")?.value;
+  if(discount) total = Math.round(total*0.97); // %3 indirim
+  return total;
+}
+
+function renderCart(){
+  cartItemsDiv.innerHTML="";
+  cart.forEach((item,i)=>{
+    const div=document.createElement("div");
+    div.className="cartItem";
+    div.innerHTML=`<img src="${item.img}"><span>${item.name}</span><span>${item.price} TL</span><button onclick="removeItem(${i})" style="margin-left:5px;padding:2px 5px;border-radius:5px;background:red;color:#fff;border:none;cursor:pointer;">X</button>`;
+    cartItemsDiv.appendChild(div);
+  });
+  cartTotalDiv.textContent=`Toplam: ${calculateTotal()} TL`;
+}
+
+function removeItem(index){ cart.splice(index,1); localStorage.setItem("userCart",JSON.stringify(cart)); renderCart(); }
+
+renderCart();
+
+function isValidTurkishPhone(phone){ return /^5\d{9}$/.test(phone.replace(/\D/g,'')); }
+
+document.getElementById("discount")?.addEventListener("input", renderCart);
+
+document.getElementById("submitOrder").addEventListener("click", ()=>{
+  const name=document.getElementById("name").value;
+  const email=document.getElementById("email").value;
+  const phone=document.getElementById("phone").value.replace(/\D/g,'');
+  const city=document.getElementById("city").value;
+  const district=document.getElementById("district").value;
+  const neighborhood=document.getElementById("neighborhood").value;
+  const street=document.getElementById("street").value;
+  const addressDetails=document.getElementById("addressDetails").value;
+  const discount=document.getElementById("discount").value;
+
+  if(!name||!email||!phone||!city||!district||!neighborhood||!street||!addressDetails){
+    alert("Lütfen tüm bilgileri eksiksiz doldurun!"); return;
+  }
+  if(!isValidTurkishPhone(phone)){ alert("Lütfen geçerli bir Türk telefon numarası girin (5xx xxx xx xx)!"); return; }
+
+  // Burada email gönderme ya da iyzico yönlendirme
+  /*
+  emailjs.send("service_id","template_id",{
+    name,name,email,email,phone,phone,
+    city,city,district,district,neighborhood,neighborhood,
+    street,street,addressDetails,addressDetails,
+    discount,discount,cart:JSON.stringify(cart)
+  },"user_id");
+  */
+  cart=[]; localStorage.removeItem("userCart"); renderCart();
+  alert("Sipariş alındı! Ödeme sayfasına yönlendiriliyorsunuz...");
+  window.location.href="https://www.sandbox.shopier.com/checkoutlink"; // iyzico linki
+});
+</script>
+</body>
+</html>
