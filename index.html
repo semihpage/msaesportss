@@ -2,38 +2,69 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>MSA Esports</title>
+<title>MSA Esports Shop</title>
+
 <style>
 body{
-margin:0;
 font-family:Arial;
-background:white;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
+background:#f4f6f9;
+margin:0;
+padding:40px;
 }
+
+.product{
+background:white;
+padding:20px;
+margin-bottom:20px;
+border-radius:10px;
+box-shadow:0 4px 15px rgba(0,0,0,0.05);
+}
+
 button{
-padding:15px 30px;
-font-size:18px;
+padding:10px 20px;
 background:black;
 color:white;
 border:none;
-border-radius:8px;
+border-radius:6px;
 cursor:pointer;
 }
-button:hover{
-opacity:0.8;
+
+.cart-btn{
+margin-top:30px;
+display:inline-block;
+padding:15px 30px;
+background:#25D366;
+color:white;
+text-decoration:none;
+border-radius:8px;
 }
 </style>
 </head>
 <body>
 
-<button onclick="goOrder()">Sipariş Oluştur</button>
+<h2>Ürünler</h2>
+
+<div class="product">
+<h3>MSA Forma</h3>
+<p>Fiyat: 500 TL</p>
+<button onclick="addToCart('MSA Forma',500)">Sepete Ekle</button>
+</div>
+
+<div class="product">
+<h3>MSA Hoodie</h3>
+<p>Fiyat: 750 TL</p>
+<button onclick="addToCart('MSA Hoodie',750)">Sepete Ekle</button>
+</div>
+
+<a href="order.html" class="cart-btn">Sepete Git</a>
 
 <script>
-function goOrder(){
-window.location.href = "order.html";
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+function addToCart(name,price){
+cart.push({name:name,price:price});
+localStorage.setItem("cart",JSON.stringify(cart));
+alert("Ürün sepete eklendi!");
 }
 </script>
 
