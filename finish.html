@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Sipariş Tamamlandı</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:linear-gradient(135deg,#0f0f0f,#1a1a1a);
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+color:white;
+text-align:center;
+}
+
+.box{
+background:#1f1f1f;
+padding:50px;
+border-radius:20px;
+box-shadow:0 0 30px rgba(0,0,0,0.6);
+}
+
+.code{
+font-size:28px;
+color:#00e676;
+margin:20px 0;
+}
+
+.whatsapp{
+margin-top:20px;
+padding:12px 25px;
+background:#25D366;
+color:white;
+border-radius:12px;
+text-decoration:none;
+display:inline-block;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h1>SİPARİŞİNİZ OLUŞTURULDU</h1>
+
+<p>Ödeme için sipariş kodunuz:</p>
+
+<div class="code" id="orderCode"></div>
+
+<p>Bu sipariş kodunu aşağıdaki numaraya yazabilirsiniz:</p>
+
+<p><b>+90 539 658 0556</b></p>
+
+<a id="wpLink" class="whatsapp" target="_blank">WhatsApp ile Gönder</a>
+</div>
+
+<script>
+let params = new URLSearchParams(window.location.search);
+let code = params.get("code");
+
+document.getElementById("orderCode").innerText = code;
+
+let message = "Merhaba, sipariş kodum: " + code;
+let link = "https://wa.me/905396580556?text=" + encodeURIComponent(message);
+
+document.getElementById("wpLink").href = link;
+</script>
+
+</body>
+</html>
