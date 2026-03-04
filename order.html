@@ -9,58 +9,54 @@
 <style>
 body{
 margin:0;
-font-family:Arial, sans-serif;
-background:linear-gradient(135deg,#0f0f0f,#1a1a1a);
+font-family:Arial;
+background:#f4f6f9;
 display:flex;
 justify-content:center;
-align-items:center;
-height:100vh;
-color:white;
+padding:40px;
 }
 
 .container{
-background:#1f1f1f;
+background:white;
+width:500px;
 padding:40px;
-border-radius:20px;
-width:400px;
-box-shadow:0 0 30px rgba(0,0,0,0.6);
+border-radius:12px;
+box-shadow:0 5px 25px rgba(0,0,0,0.08);
 }
 
 h2{
 text-align:center;
-margin-bottom:25px;
+margin-bottom:30px;
 }
 
 input, textarea{
 width:100%;
 padding:12px;
 margin-bottom:15px;
-border:none;
-border-radius:10px;
-background:#2c2c2c;
-color:white;
+border:1px solid #ddd;
+border-radius:8px;
+font-size:14px;
 }
 
 button{
 width:100%;
 padding:14px;
-border:none;
-border-radius:12px;
-background:#00c853;
+background:black;
 color:white;
+border:none;
+border-radius:8px;
 font-size:16px;
 cursor:pointer;
-transition:0.3s;
 }
 
 button:hover{
-background:#00e676;
+opacity:0.9;
 }
 </style>
 
 <script>
 (function(){
-emailjs.init("hGTQrXIX2M4Uyrmch");
+emailjs.init("BSPo8IONfgvc-LLwO");
 })();
 </script>
 </head>
@@ -71,11 +67,22 @@ emailjs.init("hGTQrXIX2M4Uyrmch");
 <h2>Sipariş Formu</h2>
 
 <form id="orderForm">
+
 <input type="text" id="name" placeholder="Ad Soyad" required>
 <input type="email" id="email" placeholder="E-Posta" required>
 <input type="text" id="phone" placeholder="Telefon" required>
-<textarea id="addressDetails" placeholder="Adres" required></textarea>
+
+<input type="text" id="city" placeholder="Şehir" required>
+<input type="text" id="district" placeholder="İlçe" required>
+<input type="text" id="neighborhood" placeholder="Mahalle" required>
+<input type="text" id="street" placeholder="Sokak" required>
+<textarea id="addressDetails" placeholder="Adres Detayı" required></textarea>
+
+<textarea id="cartItems" placeholder="Alınan Ürünler (Örn: 1x Forma - 2x Mouse)" required></textarea>
+<input type="number" id="totalPrice" placeholder="Toplam Fiyat (TL)" required>
+
 <button type="submit">Siparişi Oluştur</button>
+
 </form>
 </div>
 
@@ -85,20 +92,20 @@ e.preventDefault();
 
 let orderCode = Math.floor(100000 + Math.random() * 900000);
 
-let name = document.getElementById("name").value;
-let email = document.getElementById("email").value;
-let phone = document.getElementById("phone").value;
-let addressDetails = document.getElementById("addressDetails").value;
-
-emailjs.send("service_rd6u8hi","template_krk1kxh",{
-name:name,
-email:email,
-phone:phone,
-addressDetails:addressDetails,
-orderCode:orderCode
+emailjs.send("service_cbd5aui","template_k1wutyl",{
+orderCode: orderCode,
+name: document.getElementById("name").value,
+email: document.getElementById("email").value,
+phone: document.getElementById("phone").value,
+city: document.getElementById("city").value,
+district: document.getElementById("district").value,
+neighborhood: document.getElementById("neighborhood").value,
+street: document.getElementById("street").value,
+addressDetails: document.getElementById("addressDetails").value,
+cartItems: document.getElementById("cartItems").value,
+totalPrice: document.getElementById("totalPrice").value
 }).then(function(){
 
-// finish sayfasına yönlendir
 window.location.href = "finish.html?code=" + orderCode;
 
 });
