@@ -6,48 +6,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
-<style>
-body{
-font-family:Arial;
-background:#f4f6f9;
-padding:40px;
-}
-
-.container{
-background:white;
-padding:40px;
-border-radius:10px;
-box-shadow:0 4px 20px rgba(0,0,0,0.08);
-max-width:600px;
-margin:auto;
-}
-
-input{
-width:100%;
-padding:12px;
-margin-bottom:15px;
-border:1px solid #ddd;
-border-radius:6px;
-}
-
-button{
-width:100%;
-padding:15px;
-background:black;
-color:white;
-border:none;
-border-radius:8px;
-cursor:pointer;
-}
-
-.summary{
-background:#fafafa;
-padding:15px;
-margin-bottom:20px;
-border-radius:6px;
-}
-</style>
-
 <script>
 (function(){
 emailjs.init("BSPo8IONfgvc-LLwO");
@@ -55,32 +13,19 @@ emailjs.init("BSPo8IONfgvc-LLwO");
 </script>
 </head>
 
-<body>
-
-<div class="container">
+<body style="font-family:Arial;background:#f4f6f9;padding:40px;">
 
 <h2>Sipariş Özeti</h2>
-<div class="summary" id="cartSummary"></div>
+<div id="summary"></div>
 
-<h2>Bilgileriniz</h2>
+<h2>Bilgiler</h2>
 
-<form id="orderForm">
+<input type="text" id="name" placeholder="Ad Soyad"><br><br>
+<input type="email" id="email" placeholder="Eposta"><br><br>
+<input type="text" id="phone" placeholder="Telefon"><br><br>
+<input type="text" id="city" placeholder="Şehir"><br><br>
 
-<input type="text" id="name" placeholder="Ad Soyad" required>
-<input type="email" id="email" placeholder="E-Posta" required>
-<input type="text" id="phone" placeholder="Telefon" required>
-
-<input type="text" id="city" placeholder="Şehir" required>
-<input type="text" id="district" placeholder="İlçe" required>
-<input type="text" id="neighborhood" placeholder="Mahalle" required>
-<input type="text" id="street" placeholder="Sokak" required>
-<input type="text" id="addressDetails" placeholder="Adres Detayı" required>
-
-<button type="submit">Siparişi Oluştur</button>
-
-</form>
-
-</div>
+<button onclick="sendOrder()">Sipariş Oluştur</button>
 
 <script>
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -88,15 +33,20 @@ let total = 0;
 let summaryText = "";
 
 cart.forEach(item=>{
-total += item.price;
-summaryText += item.name + " - " + item.price + " TL<br>";
+let itemTotal = item.price * item.qty;
+total += itemTotal;
+summaryText += item.name + " x" + item.qty + " = " + itemTotal + " TL\n";
 });
 
-summaryText += "<br><b>Toplam: " + total + " TL</b>";
-document.getElementById("cartSummary").innerHTML = summaryText;
+document.getElementById("summary").innerText =
+summaryText + "\nToplam: " + total + " TL";
 
-document.getElementById("orderForm").addEventListener("submit",function(e){
-e.preventDefault();
+function sendOrder(){
+
+if(cart.length === 0){
+alert("Sepet boş!");
+return;
+}
 
 let orderCode = Math.floor(100000 + Math.random()*900000);
 
@@ -106,19 +56,17 @@ name: document.getElementById("name").value,
 email: document.getElementById("email").value,
 phone: document.getElementById("phone").value,
 city: document.getElementById("city").value,
-district: document.getElementById("district").value,
-neighborhood: document.getElementById("neighborhood").value,
-street: document.getElementById("street").value,
-addressDetails: document.getElementById("addressDetails").value,
-cartItems: summaryText.replace(/<br>/g,"\n"),
+cartItems: summaryText,
 totalPrice: total
 }).then(function(){
 
 localStorage.removeItem("cart");
-window.location.href = "finish.html?code=" + orderCode;
+window.location.href="finish.html?code="+orderCode;
 
+}).catch(function(e){
+alert("Mail Hatası: "+JSON.stringify(e));
 });
-});
+}
 </script>
 
 </body>
