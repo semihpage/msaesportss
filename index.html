@@ -2,13 +2,12 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>MSA Esports Shop</title>
+<title>MSA Shop</title>
 
 <style>
 body{
 font-family:Arial;
 background:#f4f6f9;
-margin:0;
 padding:40px;
 }
 
@@ -20,8 +19,13 @@ border-radius:10px;
 box-shadow:0 4px 15px rgba(0,0,0,0.05);
 }
 
+input[type=number]{
+width:60px;
+padding:5px;
+}
+
 button{
-padding:10px 20px;
+padding:8px 15px;
 background:black;
 color:white;
 border:none;
@@ -29,14 +33,12 @@ border-radius:6px;
 cursor:pointer;
 }
 
-.cart-btn{
-margin-top:30px;
-display:inline-block;
-padding:15px 30px;
-background:#25D366;
-color:white;
-text-decoration:none;
-border-radius:8px;
+.cart-box{
+margin-top:40px;
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 4px 15px rgba(0,0,0,0.05);
 }
 </style>
 </head>
@@ -45,27 +47,76 @@ border-radius:8px;
 <h2>Ürünler</h2>
 
 <div class="product">
-<h3>MSA Forma</h3>
-<p>Fiyat: 500 TL</p>
-<button onclick="addToCart('MSA Forma',500)">Sepete Ekle</button>
+<h3>MSA Forma - 500 TL</h3>
+Adet: <input type="number" id="qty1" value="1" min="1">
+<button onclick="addToCart('MSA Forma',500,'qty1')">Sepete Ekle</button>
 </div>
 
 <div class="product">
-<h3>MSA Hoodie</h3>
-<p>Fiyat: 750 TL</p>
-<button onclick="addToCart('MSA Hoodie',750)">Sepete Ekle</button>
+<h3>MSA Hoodie - 750 TL</h3>
+Adet: <input type="number" id="qty2" value="1" min="1">
+<button onclick="addToCart('MSA Hoodie',750,'qty2')">Sepete Ekle</button>
 </div>
 
-<a href="order.html" class="cart-btn">Sepete Git</a>
+<div class="cart-box">
+<h3>Sepet</h3>
+<div id="cartList"></div>
+<h4 id="totalPrice"></h4>
+<br>
+<button onclick="goOrder()">Siparişe Git</button>
+</div>
 
 <script>
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-function addToCart(name,price){
-cart.push({name:name,price:price});
-localStorage.setItem("cart",JSON.stringify(cart));
-alert("Ürün sepete eklendi!");
+function addToCart(name,price,qtyId){
+let qty = parseInt(document.getElementById(qtyId).value);
+
+let existing = cart.find(item => item.name === name);
+
+if(existing){
+existing.qty += qty;
+}else{
+cart.push({name:name,price:price,qty:qty});
 }
+
+localStorage.setItem("cart",JSON.stringify(cart));
+renderCart();
+}
+
+function renderCart(){
+let list = "";
+let total = 0;
+
+cart.forEach((item,index)=>{
+let itemTotal = item.price * item.qty;
+total += itemTotal;
+
+list += item.name + 
+" x" + item.qty + 
+" = " + itemTotal + " TL " +
+"<button onclick='removeItem("+index+")'>Sil</button><br><br>";
+});
+
+document.getElementById("cartList").innerHTML = list;
+document.getElementById("totalPrice").innerHTML = "Toplam: " + total + " TL";
+}
+
+function removeItem(index){
+cart.splice(index,1);
+localStorage.setItem("cart",JSON.stringify(cart));
+renderCart();
+}
+
+function goOrder(){
+if(cart.length === 0){
+alert("Sepet boş!");
+return;
+}
+window.location.href="order.html";
+}
+
+renderCart();
 </script>
 
 </body>
