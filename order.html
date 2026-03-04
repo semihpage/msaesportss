@@ -2,55 +2,49 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Sipariş Formu</title>
+<title>Sipariş</title>
 
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
 <style>
 body{
-margin:0;
 font-family:Arial;
 background:#f4f6f9;
-display:flex;
-justify-content:center;
 padding:40px;
 }
 
 .container{
 background:white;
-width:500px;
 padding:40px;
-border-radius:12px;
-box-shadow:0 5px 25px rgba(0,0,0,0.08);
+border-radius:10px;
+box-shadow:0 4px 20px rgba(0,0,0,0.08);
+max-width:600px;
+margin:auto;
 }
 
-h2{
-text-align:center;
-margin-bottom:30px;
-}
-
-input, textarea{
+input{
 width:100%;
 padding:12px;
 margin-bottom:15px;
 border:1px solid #ddd;
-border-radius:8px;
-font-size:14px;
+border-radius:6px;
 }
 
 button{
 width:100%;
-padding:14px;
+padding:15px;
 background:black;
 color:white;
 border:none;
 border-radius:8px;
-font-size:16px;
 cursor:pointer;
 }
 
-button:hover{
-opacity:0.9;
+.summary{
+background:#fafafa;
+padding:15px;
+margin-bottom:20px;
+border-radius:6px;
 }
 </style>
 
@@ -64,7 +58,11 @@ emailjs.init("BSPo8IONfgvc-LLwO");
 <body>
 
 <div class="container">
-<h2>Sipariş Formu</h2>
+
+<h2>Sipariş Özeti</h2>
+<div class="summary" id="cartSummary"></div>
+
+<h2>Bilgileriniz</h2>
 
 <form id="orderForm">
 
@@ -76,21 +74,31 @@ emailjs.init("BSPo8IONfgvc-LLwO");
 <input type="text" id="district" placeholder="İlçe" required>
 <input type="text" id="neighborhood" placeholder="Mahalle" required>
 <input type="text" id="street" placeholder="Sokak" required>
-<textarea id="addressDetails" placeholder="Adres Detayı" required></textarea>
-
-<textarea id="cartItems" placeholder="Alınan Ürünler (Örn: 1x Forma - 2x Mouse)" required></textarea>
-<input type="number" id="totalPrice" placeholder="Toplam Fiyat (TL)" required>
+<input type="text" id="addressDetails" placeholder="Adres Detayı" required>
 
 <button type="submit">Siparişi Oluştur</button>
 
 </form>
+
 </div>
 
 <script>
-document.getElementById("orderForm").addEventListener("submit", function(e){
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let total = 0;
+let summaryText = "";
+
+cart.forEach(item=>{
+total += item.price;
+summaryText += item.name + " - " + item.price + " TL<br>";
+});
+
+summaryText += "<br><b>Toplam: " + total + " TL</b>";
+document.getElementById("cartSummary").innerHTML = summaryText;
+
+document.getElementById("orderForm").addEventListener("submit",function(e){
 e.preventDefault();
 
-let orderCode = Math.floor(100000 + Math.random() * 900000);
+let orderCode = Math.floor(100000 + Math.random()*900000);
 
 emailjs.send("service_cbd5aui","template_k1wutyl",{
 orderCode: orderCode,
@@ -102,10 +110,11 @@ district: document.getElementById("district").value,
 neighborhood: document.getElementById("neighborhood").value,
 street: document.getElementById("street").value,
 addressDetails: document.getElementById("addressDetails").value,
-cartItems: document.getElementById("cartItems").value,
-totalPrice: document.getElementById("totalPrice").value
+cartItems: summaryText.replace(/<br>/g,"\n"),
+totalPrice: total
 }).then(function(){
 
+localStorage.removeItem("cart");
 window.location.href = "finish.html?code=" + orderCode;
 
 });
