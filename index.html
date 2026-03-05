@@ -3,218 +3,101 @@
 <head>
 <meta charset="UTF-8">
 <title>MSA Esports Store</title>
-
 <style>
-
-body{
-font-family:Arial;
-background:#fff;
-margin:0;
-}
-
-header{
-padding:20px;
-box-shadow:0 2px 10px rgba(0,0,0,0.1);
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.products{
-display:flex;
-gap:30px;
-padding:40px;
-justify-content:center;
-flex-wrap:wrap;
-}
-
-.product{
-width:220px;
-border:1px solid #eee;
-border-radius:15px;
-padding:15px;
-text-align:center;
-}
-
-.product img{
-width:100%;
-border-radius:10px;
-}
-
-button{
-background:black;
-color:white;
-border:none;
-padding:10px 15px;
-cursor:pointer;
-border-radius:8px;
-}
-
-#cartBtn{
-cursor:pointer;
-}
-
-#cartOverlay{
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.5);
-justify-content:center;
-align-items:center;
-}
-
-#cartBox{
-background:white;
-padding:25px;
-border-radius:15px;
-width:400px;
-}
-
+body{font-family:Segoe UI;background:#f5f5f5;margin:0;}
+header{display:flex;justify-content:space-between;align-items:center;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.1);}
+h1{margin:0;}
+#cartBtn{background:black;color:white;padding:10px 15px;border-radius:10px;cursor:pointer;}
+.products{display:flex;flex-wrap:wrap;gap:20px;padding:30px;justify-content:center;}
+.product{width:220px;background:white;border-radius:15px;box-shadow:0 4px 15px rgba(0,0,0,0.15);padding:15px;text-align:center;}
+.product img{width:100%;border-radius:12px;}
+button{background:black;color:white;border:none;padding:10px;border-radius:8px;cursor:pointer;}
+#cartOverlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;}
+#cartBox{background:white;padding:20px;border-radius:15px;width:350px;}
+.cartItem{display:flex;justify-content:space-between;margin:10px 0;}
 </style>
 </head>
-
 <body>
 
 <header>
-
-<h2>MSA ESPORTS STORE</h2>
-
-<div id="cartBtn">
-🛒 Sepet (<span id="cartCount">0</span>)
-</div>
-
+<h1>MSA Esports Store</h1>
+<div id="cartBtn">🛒 Sepet (0)</div>
 </header>
 
 <div class="products" id="productList"></div>
 
 <div id="cartOverlay">
-
 <div id="cartBox">
-
-<h3>Sepetiniz</h3>
-
+<h2>Sepet</h2>
 <div id="cartItems"></div>
-
-<p><b>Toplam:</b> <span id="totalPrice">0</span> TL</p>
-
-<button onclick="goOrder()">Siparişi Onayla</button>
-
+<h3 id="total"></h3>
+<button onclick="checkout()">Siparişi Onayla</button>
 <button onclick="closeCart()">Kapat</button>
-
 </div>
 </div>
 
 <script>
-
 const products=[
-{name:"Octopus Edition Jersey",price:599,img:"https://via.placeholder.com/200"},
-{name:"Saturn Edition Jersey",price:599,img:"https://via.placeholder.com/200"},
-{name:"Dragon Edition Jersey",price:599,img:"https://via.placeholder.com/200"},
-{name:"Wolf Edition Jersey",price:599,img:"https://via.placeholder.com/200"}
+{name:"Msa Esports Octopus Edition Jersey",price:599,img:"https://via.placeholder.com/220x220?text=Octopus"},
+{name:"Msa Esports Saturn Edition Jersey",price:599,img:"https://via.placeholder.com/220x220?text=Saturn"},
+{name:"Msa Esports Dragon Edition Jersey",price:599,img:"https://via.placeholder.com/220x220?text=Dragon"},
+{name:"Msa Esports Wolf Edition Jersey",price:599,img:"https://via.placeholder.com/220x220?text=Wolf"}
 ];
 
 let cart=JSON.parse(localStorage.getItem("cart")||"[]");
 
-const productList=document.getElementById("productList");
-
+function renderProducts(){
+const list=document.getElementById("productList");
 products.forEach((p,i)=>{
-
-productList.innerHTML+=`
-
+list.innerHTML+=`
 <div class="product">
-
 <img src="${p.img}">
-
 <h3>${p.name}</h3>
-
 <p>${p.price} TL</p>
-
-<button onclick="addCart(${i})">Sepete Ekle</button>
-
-</div>
-
-`;
-
+<button onclick="addToCart(${i})">Sepete Ekle</button>
+</div>`;
 });
+}
 
-function addCart(i){
-
+function addToCart(i){
 cart.push(products[i]);
-
 localStorage.setItem("cart",JSON.stringify(cart));
-
 updateCart();
-
+alert("Sepete eklendi");
 }
 
 function updateCart(){
-
-document.getElementById("cartCount").innerText=cart.length;
-
-}
-
-updateCart();
-
-document.getElementById("cartBtn").onclick=()=>{
-
-renderCart();
-
-document.getElementById("cartOverlay").style.display="flex";
-
-}
-
-function closeCart(){
-
-cartOverlay.style.display="none";
-
+document.getElementById("cartBtn").innerText="🛒 Sepet ("+cart.length+")";
 }
 
 function renderCart(){
-
-let items=document.getElementById("cartItems");
-
+const items=document.getElementById("cartItems");
 items.innerHTML="";
-
 let total=0;
-
-cart.forEach((item,i)=>{
-
-items.innerHTML+=`
-<div>
-${item.name} - ${item.price} TL
-<button onclick="removeItem(${i})">X</button>
-</div>
-`;
-
-total+=item.price;
-
+cart.forEach((p,i)=>{
+total+=p.price;
+items.innerHTML+=`<div class="cartItem">${p.name} - ${p.price} TL <button onclick="removeItem(${i})">X</button></div>`;
 });
-
-document.getElementById("totalPrice").innerText=total;
-
+document.getElementById("total").innerText="Toplam: "+total+" TL";
 }
 
 function removeItem(i){
-
 cart.splice(i,1);
-
 localStorage.setItem("cart",JSON.stringify(cart));
-
 renderCart();
-
 updateCart();
-
 }
 
-function goOrder(){
-
-window.location.href="order.html";
-
+document.getElementById("cartBtn").onclick=()=>{
+renderCart();
+document.getElementById("cartOverlay").style.display="flex";
 }
 
+function closeCart(){document.getElementById("cartOverlay").style.display="none";}
+function checkout(){window.location="order.html";}
+
+renderProducts();
+updateCart();
 </script>
 
 </body>
