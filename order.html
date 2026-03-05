@@ -2,119 +2,71 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Sipariş Formu</title>
-
+<title>Sipariş</title>
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-
+<script>emailjs.init("BSPo8IONfgvc-LLwO");</script>
 <style>
-
-body{
-background:white;
-font-family:Arial;
-padding:40px;
-}
-
-.container{
-max-width:500px;
-margin:auto;
-}
-
-input{
-width:100%;
-padding:10px;
-margin:8px 0;
-}
-
-button{
-width:100%;
-padding:12px;
-background:black;
-color:white;
-border:none;
-cursor:pointer;
-}
-
+body{font-family:Segoe UI;background:white;display:flex;justify-content:center;margin-top:40px;}
+.container{display:flex;gap:40px;}
+.cart{background:#f5f5f5;padding:20px;border-radius:15px;width:300px;}
+.form{background:#f5f5f5;padding:25px;border-radius:15px;width:400px;}
+input{width:100%;padding:10px;margin-top:10px;border-radius:8px;border:1px solid #ccc;}
+button{margin-top:15px;width:100%;padding:12px;background:#00bfff;border:none;color:white;border-radius:10px;cursor:pointer;}
 </style>
 </head>
-
 <body>
 
 <div class="container">
+<div class="cart">
+<h3>Sepet</h3>
+<div id="cartItems"></div>
+<h3 id="total"></h3>
+</div>
 
-<h2>Sipariş Bilgileri</h2>
-
-<div id="cartBox"></div>
-
+<div class="form">
+<h3>Adres Bilgileri</h3>
 <input id="name" placeholder="Ad Soyad">
 <input id="email" placeholder="Eposta">
 <input id="phone" placeholder="Telefon">
-
 <input value="Türkiye" disabled>
-
 <input id="city" placeholder="Şehir">
 <input id="district" placeholder="İlçe">
 <input id="neighborhood" placeholder="Mahalle">
 <input id="street" placeholder="Sokak">
-<input id="address" placeholder="Adres Detayı">
-
-<button onclick="sendOrder()">Sipariş Oluştur</button>
-
+<input id="addressDetails" placeholder="Adres Detayı">
+<button onclick="createOrder()">Sipariş Oluştur</button>
+</div>
 </div>
 
 <script>
-
-emailjs.init("BSPo8IONfgvc-LLwO");
-
 let cart=JSON.parse(localStorage.getItem("cart")||"[]");
-
 let total=0;
-let list="";
+let items="";
+cart.forEach(p=>{items+=p.name+" - "+p.price+" TL\n";total+=p.price;});
+document.getElementById("cartItems").innerText=items;
+document.getElementById("total").innerText="Toplam: "+total+" TL";
 
-cart.forEach(i=>{
-list+=i.name+" - "+i.price+" TL\n";
-total+=i.price;
-});
-
-document.getElementById("cartBox").innerHTML=
-"<b>Sepet:</b><br>"+list+"<br><b>Toplam:</b> "+total+" TL";
-
-function sendOrder(){
-
+function createOrder(){
+if(cart.length===0){alert("Sepet boş!"); return;}
 let orderCode=Math.floor(100000+Math.random()*900000);
-
-localStorage.setItem("orderCode",orderCode);
-
 emailjs.send("service_cbd5aui","template_coscb9k",{
-
 orderCode:orderCode,
-
 name:document.getElementById("name").value,
-
 email:document.getElementById("email").value,
-
 phone:document.getElementById("phone").value,
-
 city:document.getElementById("city").value,
-
 district:document.getElementById("district").value,
-
 neighborhood:document.getElementById("neighborhood").value,
-
 street:document.getElementById("street").value,
-
-addressDetails:document.getElementById("address").value,
-
-cartItems:list,
-
+addressDetails:document.getElementById("addressDetails").value,
+cartItems:items,
 totalPrice:total
-
+}).then(function(){
+localStorage.setItem("orderCode",orderCode);
+localStorage.removeItem("cart");
+window.location="finish.html";
 });
-
-window.location.href="finish.html";
-
 }
-
 </script>
-
 </body>
 </html>
