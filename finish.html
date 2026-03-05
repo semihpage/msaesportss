@@ -2,49 +2,64 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sipariş Tamamlandı</title>
 <style>
 body {
-    font-family: Arial, sans-serif;
-    background: #f0f0f0;
-    text-align: center;
-    padding: 50px;
+    font-family:Segoe UI;
+    background:#f5f5f5;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
 }
-h1 {
-    color: #28a745;
+.container {
+    background:white;
+    padding:40px;
+    border-radius:15px;
+    box-shadow:0 4px 20px rgba(0,0,0,0.15);
+    text-align:center;
+}
+h2 {
+    color:#00bfff;
 }
 p {
-    font-size: 18px;
+    font-size:18px;
+    margin:20px 0;
+}
+.code {
+    font-weight:bold;
+    font-size:24px;
+    color:#333;
+    margin:15px 0;
 }
 button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
+    margin-top:20px;
+    padding:12px 25px;
+    background:#00bfff;
+    border:none;
+    color:white;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:16px;
 }
-button:hover { background: #0056b3; }
 </style>
 </head>
 <body>
-
-<h1>Siparişiniz Başarıyla Alındı!</h1>
-<p id="orderCode">Sipariş Kodunuz: </p>
-<button onclick="window.location.href='index.html'">Ana Sayfaya Dön</button>
+<div class="container">
+<h2>Siparişiniz Alındı!</h2>
+<p>Ödeme yapmak için sipariş kodunuzu aşağıdaki WhatsApp numarasına gönderin:</p>
+<p class="code" id="orderCode">---</p>
+<p><strong>+90 539 658 0556</strong></p>
+<button onclick="goHome()">Ana Sayfaya Dön</button>
+</div>
 
 <script>
-const code = localStorage.getItem("orderCode");
-if(code) {
-    document.getElementById("orderCode").innerText = "Sipariş Kodunuz: " + code;
-    localStorage.removeItem("orderCode");
-} else {
-    document.getElementById("orderCode").innerText = "Sipariş kodu bulunamadı.";
+let code = localStorage.getItem("orderCode") || "---";
+document.getElementById("orderCode").innerText = code;
+
+function goHome() {
+    window.location = "index.html";
 }
 </script>
-
 </body>
 </html>
