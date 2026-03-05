@@ -1,21 +1,18 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="tr">
 <head>
-
 <meta charset="UTF-8">
-
-<title>Sipariş Tamamlandı</title>
+<title>Sipariş</title>
 
 <style>
 
 body{
+background:white;
 font-family:Segoe UI;
 display:flex;
 justify-content:center;
 align-items:center;
 height:100vh;
-background:white;
 }
 
 .box{
@@ -23,6 +20,10 @@ background:#f5f5f5;
 padding:40px;
 border-radius:20px;
 text-align:center;
+}
+
+h1{
+color:#00bfff;
 }
 
 </style>
@@ -35,19 +36,12 @@ text-align:center;
 
 <h2>SİPARİŞİNİZ OLUŞTURULDU</h2>
 
-<h3 id="code"></h3>
+<h1 id="code"></h1>
 
 <p>
 
-Bu sipariş kodunu
-
-<br><br>
-
-<b>+90 539 658 0556</b>
-
-<br><br>
-
-WhatsApp hattına gönderiniz.
+Ödeme yapmak için sipariş kodunuzu  
+<b>+90 539 658 0556</b> WhatsApp numarasına gönderin.
 
 </p>
 
@@ -55,12 +49,11 @@ WhatsApp hattına gönderiniz.
 
 <script>
 
-const params=new URLSearchParams(window.location.search);
+const code=localStorage.getItem("orderCode")
 
-document.getElementById("code").innerText="Sipariş Kodunuz: "+params.get("code");
+document.getElementById("code").innerText="Sipariş Kodunuz: "+code
 
 </script>
 
 </body>
-
 </html>
