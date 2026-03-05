@@ -1,73 +1,166 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+
 <meta charset="UTF-8">
+
 <title>Sipariş</title>
 
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
 <script>
+
 (function(){
+
 emailjs.init("BSPo8IONfgvc-LLwO");
+
 })();
+
 </script>
+
+<style>
+
+body{
+font-family:Segoe UI;
+background:white;
+display:flex;
+justify-content:center;
+padding:40px;
+}
+
+.container{
+width:700px;
+}
+
+input{
+width:100%;
+padding:10px;
+margin-top:10px;
+border-radius:8px;
+border:1px solid #ccc;
+}
+
+button{
+margin-top:15px;
+padding:12px;
+background:#00bfff;
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
+width:100%;
+}
+
+.cart{
+background:#f3f3f3;
+padding:20px;
+border-radius:10px;
+margin-bottom:20px;
+}
+
+</style>
+
 </head>
 
-<body style="font-family:Arial;background:#f4f6f9;padding:40px;">
+<body>
 
-<h2>Sipariş Özeti</h2>
-<div id="summary"></div>
+<div class="container">
 
-<h2>Bilgiler</h2>
+<h2>Sipariş</h2>
 
-<input type="text" id="name" placeholder="Ad Soyad"><br><br>
-<input type="email" id="email" placeholder="Eposta"><br><br>
-<input type="text" id="phone" placeholder="Telefon"><br><br>
-<input type="text" id="city" placeholder="Şehir"><br><br>
+<div class="cart">
+
+<h3>Sepet</h3>
+
+<div id="cartItems"></div>
+
+<h4 id="cartTotal"></h4>
+
+</div>
+
+<input id="name" placeholder="Ad Soyad">
+
+<input id="email" placeholder="Eposta">
+
+<input id="phone" placeholder="Telefon">
+
+<input value="Türkiye" disabled>
+
+<input id="city" placeholder="Şehir">
+
+<input id="district" placeholder="İlçe">
+
+<input id="neighborhood" placeholder="Mahalle">
+
+<input id="street" placeholder="Sokak">
+
+<input id="addressDetails" placeholder="Adres Detayı">
 
 <button onclick="sendOrder()">Sipariş Oluştur</button>
 
-<script>
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
-let total = 0;
-let summaryText = "";
+</div>
 
-cart.forEach(item=>{
-let itemTotal = item.price * item.qty;
-total += itemTotal;
-summaryText += item.name + " x" + item.qty + " = " + itemTotal + " TL\n";
+<script>
+
+let cart=JSON.parse(localStorage.getItem("cart")||"[]");
+
+let total=0;
+
+let items="";
+
+cart.forEach(p=>{
+
+items+=p.name+" - "+p.price+" TL\n";
+
+total+=p.price;
+
 });
 
-document.getElementById("summary").innerText =
-summaryText + "\nToplam: " + total + " TL";
+document.getElementById("cartItems").innerText=items;
+
+document.getElementById("cartTotal").innerText="Toplam: "+total+" TL";
 
 function sendOrder(){
 
-if(cart.length === 0){
-alert("Sepet boş!");
-return;
-}
+let orderCode=Math.floor(100000+Math.random()*900000);
 
-let orderCode = Math.floor(100000 + Math.random()*900000);
+emailjs.send("service_cbd5aui","template_coscb9k",{
 
-emailjs.send("service_cbd5aui","template_k1wutyl",{
-orderCode: orderCode,
-name: document.getElementById("name").value,
-email: document.getElementById("email").value,
-phone: document.getElementById("phone").value,
-city: document.getElementById("city").value,
-cartItems: summaryText,
-totalPrice: total
-}).then(function(){
+orderCode:orderCode,
+
+name:document.getElementById("name").value,
+
+email:document.getElementById("email").value,
+
+phone:document.getElementById("phone").value,
+
+city:document.getElementById("city").value,
+
+district:document.getElementById("district").value,
+
+neighborhood:document.getElementById("neighborhood").value,
+
+street:document.getElementById("street").value,
+
+addressDetails:document.getElementById("addressDetails").value,
+
+cartItems:items,
+
+totalPrice:total
+
+}).then(()=>{
 
 localStorage.removeItem("cart");
+
 window.location.href="finish.html?code="+orderCode;
 
-}).catch(function(e){
-alert("Mail Hatası: "+JSON.stringify(e));
 });
+
 }
+
 </script>
 
 </body>
+
 </html>
